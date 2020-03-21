@@ -5,8 +5,7 @@ const lightbox = document.querySelector(".js-lightbox");
 const lightboxImage = document.querySelector(".lightbox__image");
 const closeButton = document.querySelector(".lightbox__button");
 
-const arrayWithGallery = [];
-galleryItems.forEach(item => {
+const arrayWithGallery = galleryItems.map(item => {
   const li = document.createElement("li");
   li.classList.add("gallery__item");
 
@@ -23,14 +22,18 @@ galleryItems.forEach(item => {
 
   a.appendChild(img);
   li.appendChild(a);
-  arrayWithGallery.push(li);
+  return li;
 });
 gallery.append(...arrayWithGallery);
 
 const openImageModal = ({ target }) => {
   event.preventDefault();
+  if (event.target.nodeName !== "IMG") {
+    return;
+  }
   lightbox.classList.add("is-open");
   lightboxImage.src = target.dataset.source;
+  document.addEventListener("keyup", closeImageModal);
 };
 const closeImageModal = event => {
   event.preventDefault();
@@ -41,9 +44,9 @@ const closeImageModal = event => {
   ) {
     lightbox.classList.remove("is-open");
     lightboxImage.setAttribute("src", "");
+    document.removeEventListener("keyup", closeImageModal);
   }
 };
 
 gallery.addEventListener("click", openImageModal);
 lightbox.addEventListener("click", closeImageModal);
-document.addEventListener("keyup", closeImageModal);
